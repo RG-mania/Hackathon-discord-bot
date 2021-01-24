@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 from discord.utils import get
+import asyncio
+import time
 
 client = commands.Bot(command_prefix = '%')
 
@@ -41,12 +43,27 @@ async def role_adder(ctx, rolename):
     except:
         await ctx.send("an error has occured")
 
-# @client.command()
-# async def emotecheck(ctx, emname):
-#     msg = ctx.send("React to this message!")
-#     emote = get(ctx.message.guild.emojis, name=emname)
-#     reaction = client.wait_for_reaction([emote], msg)
-#     await client.send(f'You reacted with {reaction.emoji}')
+@client.command()
+async def emotecheck(ctx, emname, rolename):
+    msg = await ctx.send(f"React to this message with {emname}")
+    emote = get(ctx.message.guild.emojis, name=emname)
+    def check(reaction, user):
+        return reaction.message == msg and reaction.emoji == emname
+    t_end = time.time() + 15
+    while time.time() < t_end:
+        try:
+            reaction, user = await client.wait_for('reaction_add', timeout=t_end-time.time(), check=check)
+        except asyncio.TimeoutError:
+            await ctx.send('Reacting period has ended.')
+        else:
+            await ctx.send("adding role")
+            try:
+                role = get(user.guild.roles, name=rolename)
+                await user.add_roles(role)
+                await ctx.send("role added")
+            except:
+                await ctx.send("an error has occured")
+    #await ctx.send('Reacting period has ended.')
 
 
-client.run('ODAyNTk1MzE5NDM0MTgyNzA5.YAxhIw.6njS_-b8pYv8DEGgzB79kIEJaSE')
+client.run('ODAyNTk1MzE5NDM0MTgyNzA5.YAxhIw.UfYOWLSjp-7Mb0OwI3QHGZm5grE')
