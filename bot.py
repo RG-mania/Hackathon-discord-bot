@@ -46,6 +46,7 @@ async def role_adder(ctx, rolename):
 @client.command()
 async def emotecheck(ctx, emname, rolename):
     msg = await ctx.send(f"React to this message with {emname}")
+    await msg.add_reaction(emname)
     emote = get(ctx.message.guild.emojis, name=emname)
     def check(reaction, user):
         return reaction.message == msg and reaction.emoji == emname
@@ -66,4 +67,4 @@ async def emotecheck(ctx, emname, rolename):
     #await ctx.send('Reacting period has ended.')
 
 
-client.run('ODAyNTk1MzE5NDM0MTgyNzA5.YAxhIw.UfYOWLSjp-7Mb0OwI3QHGZm5grE')
+client.run('token here')
